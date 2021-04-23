@@ -1,12 +1,10 @@
 import "./App.scss";
-import { useState, useEffect, Fragment } from "react";
-// import ButtonGroup from "react-bootstrap/ButtonGroup";
-// import Button from "react-bootstrap/Button";
-// import InputGroup from "react-bootstrap/InputGroup";
-// import FormControl from "react-bootstrap/FormControl";
-// import Badge from "react-bootstrap/Badge";
-import Color from "color";
+import { useEffect, Fragment } from "react";
 import { useHistory } from "react-router-dom";
+import { nanoid } from "nanoid";
+import { useSelector, useDispatch } from "react-redux";
+import { setSelected } from "./actions";
+import Color from "color";
 import tetrislogo from "./images/tetrislogo.png";
 import computesoftware from "./images/computesoftware.svg";
 import appearix from "./images/appearix.png";
@@ -17,7 +15,6 @@ import relaxdb from "./images/relaxdb.png";
 import essenceprep from "./images/essenceprep.png";
 import lingdong from "./images/lingdong.png";
 import asterprep from "./images/asterprep.png";
-import { nanoid } from "nanoid";
 
 let colors = {
   Technology: "#1b82ff",
@@ -157,7 +154,7 @@ const experiences = [
     date: "September 2020 - October 2020",
     role: "Technical Co-Founder",
     description: `Helped with formation of the concept for this project and initial tech setup.
-    Worked on the IOS and Android prototype for the mobile version of the application, designing the 
+    Worked on the IOS and Android protoactiveColor for the mobile version of the application, designing the 
     frontend for the application and hooking up Firebase for authentication and data storage. 
     A new social media app that won't sell your data, won't show ads 
     and put's the user in control`,
@@ -322,7 +319,12 @@ const experiences = [
   },
 ];
 
-function ExperienceBlock({ exp, selected, setSelected }) {
+const skillCounter = experiences.reduce((x, exp) => {
+  Object.keys(exp.tags).forEach((tag) => (x[tag] ? (x[tag] += 1) : (x[tag] = 1)));
+  return x;
+}, {});
+
+function ExperienceBlock({ exp }) {
   return (
     <div className="project">
       <img
@@ -344,12 +346,9 @@ function ExperienceBlock({ exp, selected, setSelected }) {
               return (
                 <Tag
                   key={i}
-                  setSelected={setSelected}
                   skillName={skillName}
-                  type={exp.tags[skillName]}
-                  isOn={selected.includes(skillName)}
-                  selected={selected}
-                  noTag={true}
+                  activeColor={colors[exp.tags[skillName]]}
+                  removeCount={true}
                 />
               );
             })}
@@ -381,18 +380,18 @@ function ExperienceBlock({ exp, selected, setSelected }) {
   );
 }
 
-function Tag({ skillName, type, selected, isOn, noTag, setSelected }) {
+function Tag({ skillName, activeColor, removeCount }) {
   const history = useHistory();
-  let highlightColor = colors[type];
-  let skillCount = !noTag
-    ? experiences.reduce((n, exp) => n + (exp.tags[skillName] ? 1 : 0), 0)
-    : null;
+  const dispatch = useDispatch();
+  const selected = useSelector((state) => state.mainstate.selected);
+  const isOn = selected.includes(skillName);
+  let skillCount = !removeCount ? skillCounter[skillName] : null;
 
   function manipulateUrl() {
     let newS = selected.includes(skillName)
       ? selected.filter((x) => x !== skillName)
       : [...selected, skillName];
-    setSelected(newS);
+    dispatch(setSelected(newS));
     history.push({ hash: newS.map(encodeURI).join("#") });
   }
   return (
@@ -400,19 +399,17 @@ function Tag({ skillName, type, selected, isOn, noTag, setSelected }) {
       <div className="toggle-tag">
         <button
           onClick={manipulateUrl}
-          style={
-            isOn ? { backgroundColor: highlightColor, color: "white" } : null
-          }
+          style={isOn ? { backgroundColor: activeColor, color: "white" } : null}
         >
           {skillName}
         </button>
-        {!noTag ? (
+        {!removeCount ? (
           <button
             onClick={manipulateUrl}
             style={
               isOn
                 ? {
-                    backgroundColor: Color(highlightColor).darken(0.3),
+                    backgroundColor: Color(activeColor).darken(0.3),
                     color: "white",
                   }
                 : { backgroundColor: Color("#f4f6f8").darken(0.06) }
@@ -437,10 +434,13 @@ function getSelected() {
 
 function App() {
   const history = useHistory();
-  const [selected, setSelected] = useState([]);
+  const selected = useSelector((state) => state.mainstate.selected);
+  const dispatch = useDispatch();
   useEffect(() => {
-    history.listen(() => setSelected(getSelected));
-    setSelected(getSelected());
+    history.listen(() => {
+      dispatch(setSelected(getSelected()));
+    });
+    dispatch(setSelected(getSelected()));
   }, []);
   return (
     <div className="App">
@@ -508,13 +508,13 @@ function App() {
           </p>
           <p>
             Additionally I was also taking a challenging Neural Interfacing
-            className which <strong>exploited</strong> my pre-existing beliefs
-            on what was possible through code. There was one particular
-            assignment where we extrapolated electrical impulse propagation
-            throughout the brain. Something which I thought was{" "}
-            <strong>not possible</strong>, but there it was, a script, that
-            consistently reproduced results, was <strong>distributable</strong>{" "}
-            and replicable <strong>anywhere</strong>.
+            class which <strong>exploited</strong> my pre-existing beliefs on
+            what was possible through code. There was one particular assignment
+            where we extrapolated electrical impulse propagation throughout the
+            brain. Something which I thought was <strong>not possible</strong>,
+            but there it was, a script, that consistently reproduced results,
+            was <strong>distributable</strong> and replicable{" "}
+            <strong>anywhere</strong>.
           </p>
           <p>
             And from that moment I had a realization and started investing
@@ -532,28 +532,12 @@ function App() {
           <h3 style={{ paddingBottom: "0.5em" }}>
             Filter Experiences by Skill
           </h3>
-          {/* <div className="search-container">
-            <InputGroup>
-              <FormControl
-                type="text"
-                placeholder="Click on the Tags or Search"
-                aria-describedby="btnGroupAddon"
-              />
-              <InputGroup.Append>
-                <Button>Search</Button>
-              </InputGroup.Append>
-            </InputGroup>
-          </div> */}
-          {/* <h4>Tags</h4> */}
           <div className="tags">
             {Object.keys(tagsMap).map((skillName, i) => (
               <Tag
                 key={i}
                 skillName={skillName}
-                type={tagsMap[skillName]}
-                isOn={selected.includes(skillName)}
-                selected={selected}
-                setSelected={setSelected}
+                activeColor={colors[tagsMap[skillName]]}
               />
             ))}
           </div>
@@ -562,24 +546,8 @@ function App() {
               let containsSkill = selected.every(
                 (skillName) => exp.tags[skillName]
               );
-              if (selected.length === 0)
-                return (
-                  <ExperienceBlock
-                    setSelected={setSelected}
-                    exp={exp}
-                    selected={selected}
-                    key={nanoid()}
-                  />
-                );
-              if (containsSkill)
-                return (
-                  <ExperienceBlock
-                    setSelected={setSelected}
-                    exp={exp}
-                    selected={selected}
-                    key={nanoid()}
-                  />
-                );
+              if (selected.length === 0 || containsSkill)
+                return <ExperienceBlock exp={exp} key={nanoid()} />;
               return null;
             })}
           </div>
