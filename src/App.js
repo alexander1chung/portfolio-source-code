@@ -69,12 +69,9 @@ const experiences = [
     title: "Aster Prep",
     date: "January 2014 - Present",
     role: "Founder",
-    description: `At ASTER Prep we're targetting educational reform through a
-    supplementary program that teaches science and technology through
-    direct application and experiences.
-    Through direct application of science we can create first hand experiences that are magnitudes better than
-    reading about a phenomenon from textbook theory. The standards for education are constantly growing
-    and this method provides an effective solution to making knowledge stick without the hours of plain and boring studying.`,
+    description: `A little side project that I've been working on for a long time where I'm conducting educational reform with
+    direct application of theory. The standards for education are constantly growing and
+    this method provides an effective solution to making knowledge stick without the hours of plain and boring studying.`,
     tags: {
       "React.js": "Technology",
       Redux: "Technology",
@@ -102,7 +99,7 @@ const experiences = [
     to allow client to scale consultation services. This website is deployed on AWS EC2, uses a
     continuous deployment pipeline with elastic beanstalk paired with a load balancer, as well as
     Route 53 for DNS Management, AWS S3 for Data Storage, AWS RDS for creating relations, AWS SES and SMS for verification and sending emails, AWS certificate manager for deploying SSL/TLS, 
-    CloudWatch to monitor operational data, and CloudFront to ensure high and secure availability.`,
+    CloudWatch to monitor operational data, and CloudFront to ensure high and secure availability. Project currently in stealth mode.`,
     tags: {
       SMTP: "Technology",
       AWS: "Technology",
@@ -154,7 +151,7 @@ const experiences = [
     date: "September 2020 - October 2020",
     role: "Technical Co-Founder",
     description: `Helped with formation of the concept for this project and initial tech setup.
-    Worked on the IOS and Android protoactiveColor for the mobile version of the application, designing the 
+    Worked on the IOS and Android prototype for the mobile version of the application, designing the 
     frontend for the application and hooking up Firebase for authentication and data storage. 
     A new social media app that won't sell your data, won't show ads 
     and put's the user in control`,
@@ -320,7 +317,9 @@ const experiences = [
 ];
 
 const skillCounter = experiences.reduce((x, exp) => {
-  Object.keys(exp.tags).forEach((tag) => (x[tag] ? (x[tag] += 1) : (x[tag] = 1)));
+  Object.keys(exp.tags).forEach((tag) =>
+    x[tag] ? (x[tag] += 1) : (x[tag] = 1)
+  );
   return x;
 }, {});
 
@@ -517,12 +516,12 @@ function App() {
             <strong>anywhere</strong>.
           </p>
           <p>
-            And from that moment I had a realization and started investing
-            heavily in my programming prowess. I built websites in PHP 7 paired
-            with MySQL and HTML/CSS and after becoming proficient I was able to
-            find an internship as a <strong>Frontend Developer</strong> where I
-            built out components and integrated Charts. After the internship, I
-            decided to learn more about the <strong>Full Stack</strong> at{" "}
+            And from that moment I started heavily investing in my programming
+            prowess. I built websites in PHP 7 paired with MySQL and HTML/CSS
+            and after becoming proficient I was able to find an internship as a{" "}
+            <strong>Frontend Developer</strong> where I built out components and
+            integrated Charts. After the internship, I then decided to learn more
+            about the <strong>Full Stack</strong> at{" "}
             <strong>Hack Reactor</strong>.
           </p>
           <p>
