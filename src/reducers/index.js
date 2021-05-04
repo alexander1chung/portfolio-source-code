@@ -336,7 +336,6 @@ function setSelectedObject(action) {
   let selected = action.payload;
   let experiences = filterExperiences(selected);
   let skillCounter = countSkills(experiences);
-  // let tagsMap = getRemainingTags(skillCounter);
   return { selected, experiences, skillCounter, tagsMap };
 }
 
@@ -350,7 +349,14 @@ const initialState = {
 const mainstate = function (state = initialState, action) {
   switch (action.type) {
     case "SET_SELECTED":
-      return setSelectedObject(action);
+      let { selected, experiences, skillCounter, tagsMap } = setSelectedObject(action);
+      return {
+        ...state,
+        selected,
+        experiences,
+        skillCounter,
+        tagsMap,
+      }
     default:
       return state;
   }
