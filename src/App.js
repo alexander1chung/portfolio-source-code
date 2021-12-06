@@ -89,7 +89,7 @@ function Tag({ skillName, activeColor, removeCount, skillCounter }) {
         <button
           onClick={manipulateUrl}
           style={
-            (disabled && !removeCount)
+            disabled && !removeCount
               ? { backgroundColor: "#808080", color: "white" }
               : isOn
               ? { backgroundColor: activeColor, color: "white" }
@@ -104,7 +104,10 @@ function Tag({ skillName, activeColor, removeCount, skillCounter }) {
             onClick={manipulateUrl}
             style={
               disabled
-                ? { backgroundColor: Color("#808080").darken(0.2), color: "white" }
+                ? {
+                    backgroundColor: Color("#808080").darken(0.2),
+                    color: "white",
+                  }
                 : isOn
                 ? {
                     backgroundColor: Color(activeColor).darken(0.3),
@@ -174,7 +177,7 @@ function App() {
         </div>
         <div className="section-2">
           <div className="quote">
-            <div>Have a clear vision? Let's make it</div>
+            <div>{`Let's Change the World Together`}</div>
           </div>
           <h3>About Me</h3>
           <p>Hi I'm Alex!</p>
